@@ -1,24 +1,38 @@
-import {LaunchList} from "./launchList";
-import {Map} from "./map";
-import {useEffect, useState} from "react";
-import {SpaceX} from "../api/spacex";
+import { LaunchList } from "./launchList";
+import { Map } from "./map";
+import { useEffect, useState } from "react";
+import { SpaceX } from "../api/spacex";
 
-function App(){
+function App() {
 
     const [launches, setLaunches] = useState([]);
-    const spacex = new SpaceX();
-    useEffect(()=>{
-        spacex.launches().then(data =>{
-            setLaunches(data)
-        })
-    },[])
+    const [launchpads, setLaunchpads] = useState([]);
+    const [activeLaunchpadId, setActiveLaunchpadId] = useState(null);
 
-    return(
-        <main className='main'>
-            <LaunchList launches = {launches}/>
-            <Map/>
+    const spacex = new SpaceX();
+
+    useEffect(() => {
+        spacex.launches().then(data => {
+            setLaunches(data);
+        });
+
+        spacex.launchpads().then(data => {
+            setLaunchpads(data);
+        });
+    }, []);
+
+    return (
+        <main className="main">
+            <LaunchList
+                launches={launches}
+                onLaunchHover={setActiveLaunchpadId}
+            />
+            <Map
+                launchpads={launchpads}
+                activeLaunchpadId={activeLaunchpadId}
+            />
         </main>
-    )
+    );
 }
 
-export {App};
+export { App };
